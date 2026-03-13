@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NJ School Funding Dashboard — FY2027 K–12 State Aid</title>
+<title>Proposed 2026-27 state aid to N.J. schools — NJ.com</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -99,7 +99,7 @@ tr:hover td{background:rgba(188,208,49,.06)}
 </header>
 
 <section class="hero">
-  <h1>FY2027 New Jersey K–12 State School Aid</h1>
+  <h1>Proposed 2026-27 state aid to N.J. schools</h1>
   <p class="subtitle">Source: NJ Department of Education, Office of School Finance &bull; Excluding Debt Service Aid</p>
 </section>
 
@@ -146,18 +146,18 @@ let rankDir='desc';
 
 const COLS_COUNTY=[
   {key:'county',label:'County',fmt:'text'},
+  {key:'pctChange',label:'% Change',fmt:'pct'},
+  {key:'fy27',label:'FY27 K–12 Aid',fmt:'dollar'},
+  {key:'difference',label:'FY26–27 Difference',fmt:'dollar_sign'},
   {key:'fy26',label:'FY26 K–12 Aid',fmt:'dollar'},
+  {key:'transportation',label:'Transportation Aid',fmt:'dollar'},
+  {key:'specialEd',label:'Special Ed Aid',fmt:'dollar'},
   {key:'equalization',label:'Equalization Aid',fmt:'dollar'},
   {key:'edAdequacy',label:'Ed. Adequacy Aid',fmt:'dollar'},
   {key:'choice',label:'School Choice Aid',fmt:'dollar'},
-  {key:'transportation',label:'Transportation Aid',fmt:'dollar'},
-  {key:'specialEd',label:'Special Ed Aid',fmt:'dollar'},
   {key:'security',label:'Security Aid',fmt:'dollar'},
   {key:'vocational',label:'Vocational Aid',fmt:'dollar'},
-  {key:'military',label:'Military Impact Aid',fmt:'dollar'},
-  {key:'fy27',label:'FY27 K–12 Aid',fmt:'dollar'},
-  {key:'difference',label:'FY26–27 Difference',fmt:'dollar_sign'},
-  {key:'pctChange',label:'% Change',fmt:'pct'}
+  {key:'military',label:'Military Impact Aid',fmt:'dollar'}
 ];
 const COLS_DISTRICT=[
   {key:'district',label:'District',fmt:'text'},
@@ -166,11 +166,11 @@ const COLS_DISTRICT=[
   {key:'fy27',label:'FY27 K–12 Aid',fmt:'dollar'},
   {key:'difference',label:'FY26–27 Difference',fmt:'dollar_sign'},
   {key:'fy26',label:'FY26 K–12 Aid',fmt:'dollar'},
+  {key:'transportation',label:'Transportation Aid',fmt:'dollar'},
+  {key:'specialEd',label:'Special Ed Aid',fmt:'dollar'},
   {key:'equalization',label:'Equalization Aid',fmt:'dollar'},
   {key:'edAdequacy',label:'Ed. Adequacy Aid',fmt:'dollar'},
   {key:'choice',label:'School Choice Aid',fmt:'dollar'},
-  {key:'transportation',label:'Transportation Aid',fmt:'dollar'},
-  {key:'specialEd',label:'Special Ed Aid',fmt:'dollar'},
   {key:'security',label:'Security Aid',fmt:'dollar'},
   {key:'vocational',label:'Vocational Aid',fmt:'dollar'},
   {key:'military',label:'Military Impact Aid',fmt:'dollar'}
