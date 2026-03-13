@@ -28,11 +28,11 @@ body{font-family:'Libre Franklin',sans-serif;background:var(--bg);color:var(--te
 .hero .subtitle{color:rgba(255,255,255,.7);font-size:.95rem;font-weight:400}
 
 /* STAT CARDS */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;max-width:1200px;margin:-28px auto 24px;padding:0 20px;position:relative;z-index:10}
-.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px 18px;box-shadow:var(--shadow);border-top:3px solid var(--green);text-align:center}
-.stat-card .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);font-weight:600;margin-bottom:4px}
-.stat-card .value{font-size:1.6rem;font-weight:800;color:var(--text)}
-.stat-card .sub{font-size:.78rem;color:var(--accent);font-weight:600;margin-top:2px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;max-width:800px;margin:-20px auto 20px;padding:0 20px;position:relative;z-index:10}
+.stat-card{background:var(--surface);border-radius:var(--radius-sm);padding:10px 9px;box-shadow:var(--shadow);border-top:2px solid var(--green);text-align:center}
+.stat-card .label{font-size:.58rem;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);font-weight:600;margin-bottom:2px}
+.stat-card .value{font-size:.95rem;font-weight:800;color:var(--text)}
+.stat-card .sub{font-size:.62rem;color:var(--accent);font-weight:600;margin-top:1px}
 
 /* CONTROLS */
 .controls-wrap{max-width:1200px;margin:0 auto 20px;padding:0 20px}
@@ -68,7 +68,12 @@ tr:hover td{background:rgba(188,208,49,.06)}
 .pct-pos{background:var(--green)}
 .pct-neg{background:var(--accent)}
 
-.row-count{padding:12px 16px;font-size:.78rem;color:var(--text-muted);font-weight:500;border-top:1px solid var(--border);text-align:right}
+.row-count{padding:12px 16px;font-size:.78rem;color:var(--text-muted);font-weight:500;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.pag-btns{display:flex;gap:4px;align-items:center}
+.pag-btn{font-family:inherit;font-size:.78rem;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);cursor:pointer;transition:all .15s;font-weight:600}
+.pag-btn:hover:not(:disabled):not(.pag-active){background:rgba(229,75,34,.08);border-color:var(--accent)}
+.pag-btn:disabled{opacity:.35;cursor:default}
+.pag-active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* FOOTER */
 .site-footer{background:var(--dark);color:rgba(255,255,255,.55);text-align:center;padding:20px;font-size:.72rem}
@@ -77,9 +82,9 @@ tr:hover td{background:rgba(188,208,49,.06)}
 /* MOBILE */
 @media(max-width:700px){
   .hero{padding:28px 16px 24px}
-  .stats-row{grid-template-columns:1fr 1fr;gap:10px;margin-top:-20px;padding:0 12px}
-  .stat-card{padding:14px 10px}
-  .stat-card .value{font-size:1.15rem}
+  .stats-row{grid-template-columns:1fr 1fr;gap:6px;margin-top:-14px;padding:0 12px}
+  .stat-card{padding:8px 6px}
+  .stat-card .value{font-size:.85rem}
   .controls-wrap,.table-wrap{padding:0 12px}
   .filter-row{flex-direction:column}
   .filter-row select,.filter-row input{flex:1 1 100%;width:100%}
@@ -87,7 +92,7 @@ tr:hover td{background:rgba(188,208,49,.06)}
   td,th{padding:8px 6px}
 }
 @media(max-width:420px){
-  .stats-row{grid-template-columns:1fr;gap:8px}
+  .stats-row{grid-template-columns:1fr 1fr;gap:6px}
 }
 </style>
 </head>
@@ -101,6 +106,7 @@ tr:hover td{background:rgba(188,208,49,.06)}
 <section class="hero">
   <h1>Proposed 2026-27 state aid to N.J. schools</h1>
   <p class="subtitle">Source: NJ Department of Education, Office of School Finance &bull; Excluding Debt Service Aid</p>
+  <p class="subtitle" style="font-size:9pt;margin-top:4px;color:rgba(255,255,255,.5)">AI coding tools were used to design this dashboard.</p>
 </section>
 
 <div class="stats-row" id="statsRow"></div>
@@ -143,6 +149,8 @@ let sortDir='desc';
 let searchTerm='';
 let rankMetric='fy27';
 let rankDir='desc';
+let currentPage=1;
+const PAGE_SIZE=25;
 
 const COLS_COUNTY=[
   {key:'county',label:'County',fmt:'text'},
@@ -219,16 +227,16 @@ function renderFilters(){
   const fr=document.getElementById('filterRow');
   if(currentView==='county'){
     fr.innerHTML=`
-      <input type="text" placeholder="Search counties…" id="searchBox" oninput="searchTerm=this.value;renderTable()">
+      <input type="text" placeholder="Search counties…" id="searchBox" oninput="searchTerm=this.value;currentPage=1;renderTable()">
     `;
   }else{
     const counties=Array.from(new Set(DATA.districts.map(d=>d.county))).sort();
     fr.innerHTML=`
-      <select id="countyFilter" onchange="currentCounty=this.value;renderTable()">
+      <select id="countyFilter" onchange="currentCounty=this.value;currentPage=1;renderTable()">
         <option value="all">All Counties</option>
         ${counties.map(c=>`<option value="${c}"${c===currentCounty?' selected':''}>${c}</option>`).join('')}
       </select>
-      <input type="text" placeholder="Search districts…" id="searchBox" oninput="searchTerm=this.value;renderTable()">
+      <input type="text" placeholder="Search districts…" id="searchBox" oninput="searchTerm=this.value;currentPage=1;renderTable()">
     `;
   }
 }
@@ -237,6 +245,7 @@ function switchView(v){
   currentView=v;
   searchTerm='';
   sortCol=null;
+  currentPage=1;
   document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
   renderFilters();
   renderTable();
@@ -284,12 +293,18 @@ function renderTable(){
 
   // Body
   const tbody=document.querySelector('#mainTable tbody');
+  const totalRows=rows.length;
+  const totalPages=Math.max(1,Math.ceil(totalRows/PAGE_SIZE));
+  if(currentPage>totalPages)currentPage=totalPages;
+  const startIdx=(currentPage-1)*PAGE_SIZE;
+  const pageRows=rows.slice(startIdx,startIdx+PAGE_SIZE);
   const maxPct=Math.max(...rows.map(r=>Math.abs(r.pctChange||0)),0.001);
   let html='';
-  rows.forEach((r,i)=>{
+  pageRows.forEach((r,i)=>{
+    const globalIdx=startIdx+i;
     const cls=r.difference>0?'positive':r.difference<0?'negative':'';
     html+='<tr class="'+cls+'">';
-    if(sortCol) html+=`<td style="text-align:center;color:var(--text-muted);font-weight:700;font-size:.75rem">${i+1}</td>`;
+    if(sortCol) html+=`<td style="text-align:center;color:var(--text-muted);font-weight:700;font-size:.75rem">${globalIdx+1}</td>`;
     cols.forEach(c=>{
       if(c.key==='pctChange'){
         const w=Math.round((Math.abs(r.pctChange||0)/maxPct)*40);
@@ -303,14 +318,32 @@ function renderTable(){
   });
   tbody.innerHTML=html;
 
-  // Count
-  const scope=currentView==='district'&&currentCounty!=='all'?currentCounty+' County':'Statewide';
-  document.getElementById('rowCount').textContent=`Showing ${rows.length} ${currentView==='county'?'counties':'districts'} — ${scope}`;
+  // Pagination controls
+  let pagHtml=`<span>Showing ${totalRows===0?0:startIdx+1}–${Math.min(startIdx+PAGE_SIZE,totalRows)} of ${totalRows} ${currentView==='county'?'counties':'districts'}`;
+  const scope=currentView==='district'&&currentCounty!=='all'?' — '+currentCounty+' County':' — Statewide';
+  pagHtml+=scope+'</span>';
+  if(totalPages>1){
+    pagHtml+='<span class="pag-btns">';
+    pagHtml+=`<button class="pag-btn" onclick="goPage(1)" ${currentPage===1?'disabled':''}>«</button>`;
+    pagHtml+=`<button class="pag-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+    const startP=Math.max(1,currentPage-2);
+    const endP=Math.min(totalPages,startP+4);
+    for(let p=startP;p<=endP;p++){
+      pagHtml+=`<button class="pag-btn${p===currentPage?' pag-active':''}" onclick="goPage(${p})">${p}</button>`;
+    }
+    pagHtml+=`<button class="pag-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>›</button>`;
+    pagHtml+=`<button class="pag-btn" onclick="goPage(${totalPages})" ${currentPage===totalPages?'disabled':''}>»</button>`;
+    pagHtml+='</span>';
+  }
+  document.getElementById('rowCount').innerHTML=pagHtml;
 }
+
+function goPage(p){currentPage=p;renderTable();document.querySelector('.table-container').scrollIntoView({behavior:'smooth',block:'start'})}
 
 function headerSort(key){
   if(sortCol===key){sortDir=sortDir==='asc'?'desc':'asc'}
   else{sortCol=key;sortDir=key==='county'||key==='district'?'asc':'desc'}
+  currentPage=1;
   renderTable();
 }
 
